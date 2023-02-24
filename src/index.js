@@ -32,7 +32,7 @@ app.get('/test', (req, res)=>{
 // })
 app.use(cors());
 app.use('/',  createProxyMiddleware({ target: 'https://test03.rshb.ru', changeOrigin: true }));
-app.use(cors(corsOptions));
+//app.use(cors());
 
 
 
