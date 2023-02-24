@@ -1,0 +1,26 @@
+{
+  "name": "simple-proxy-server-03",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rddeveloper2019/simple-proxy-server-03.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rddeveloper2019/simple-proxy-server-03/issues"
+  },
+  "homepage": "https://github.com/rddeveloper2019/simple-proxy-server-03#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
+    "nodemon": "^2.0.20"
+  }
+}
