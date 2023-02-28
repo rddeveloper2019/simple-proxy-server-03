@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 const proxy = require('express-http-proxy');
 const catchCookies = require('./catchCookies');
-const catchedCookies = require('./catchedCookies');
+let catchedCookies = require('./catchedCookies');
 const getCookiesString = require('./getCookiesString');
 const catchedCookiesFile = './catchedCookies.js';
 let proxyUrl = 'https://test03.rshb.ru';
@@ -22,7 +22,6 @@ const resetData = () => {
       console.log('server reset success');
     }
   });
-
 };
 
 const restartResetTimer = () => {
@@ -41,8 +40,8 @@ const restartResetTimer = () => {
 const cookieCather = (req, res, next) => {
   if (catchedCookies.JSESSIONID) {
     req.headers.cookie = getCookiesString(req.headers.cookie, catchedCookies);
-    console.log(catchedCookies);
-    console.log(req.headers.cookie);
+    //console.log(catchedCookies);
+    //console.log(req.headers.cookie);
   }
   time = 7;
   restartResetTimer();
@@ -59,7 +58,7 @@ app.get('/manual', (req, res) => {
     : 'Автоматическое обнуление OFF';
 
   res.send(
-    `<p>var workHost ="https://simple-proxy-server-03.onrender.com"</p><p>Стенд: ${standInfo}</p><a href="/toggleProxyUrl">Сменить стенд</a><p>${message}</p><a href="/toggleTimer">ОТКЛ/ВКЛ автоматическое обнуление</a><p><a href="/resetNow">Обнулить сейчас (Стенд RTEST по умолчанию)</a></p>`
+    `<p>var workHost ="https://simple-proxy-server-03.onrender.com"</p><p>var workHost ="http://localhost:3000"</p><p>Стенд: ${standInfo}</p><a href="/toggleProxyUrl">Сменить стенд</a><p>${message}</p><a href="/toggleTimer">ON/OFF автоматическое обнуление</a><p><a href="/resetNow">Обнулить сейчас (Стенд RTEST по умолчанию)</a></p>`
   );
 });
 
@@ -72,7 +71,6 @@ app.get('/toggleTimer', (req, res) => {
 });
 
 app.get('/toggleProxyUrl', (req, res) => {
-  ;
   proxyUrl =
     proxyUrl === 'https://test03.rshb.ru'
       ? 'https://test04.rshb.ru'
@@ -84,7 +82,9 @@ app.get('/toggleProxyUrl', (req, res) => {
 });
 
 app.get('/resetNow', (req, res) => {
-  resetData();
+  catchedCookies = {};
+  proxyUrl = 'https://test03.rshb.ru';
+  standInfo = proxyUrl === 'https://test03.rshb.ru' ? 'TEST03' : 'TEST04';
   console.log('Proxy URL: ', proxyUrl);
   res.status(200);
   res.redirect(`/manual`);
