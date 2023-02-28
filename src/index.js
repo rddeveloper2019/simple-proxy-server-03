@@ -85,6 +85,8 @@ app.get('/resetNow', (req, res) => {
   catchedCookies = {};
   proxyUrl = 'https://test03.rshb.ru';
   standInfo = proxyUrl === 'https://test03.rshb.ru' ? 'TEST03' : 'TEST04';
+  time = 7;
+  restartResetTimer();
   console.log('Proxy URL: ', proxyUrl);
   res.status(200);
   res.redirect(`/manual`);
