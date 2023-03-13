@@ -12,7 +12,9 @@ module.exports = (req, catchedCookies) => {
           el.forEach((str) => {
             if (str.includes('=')) {
               var [key, value] = str.split('=');
-              if (!catchedCookies[key]) {
+              if (key.toLowerCase() === 'path') {
+                catchedCookies['path'] = value.slice(0, -1);
+              } else if (!catchedCookies[key]) {
                 catchedCookies[key] = value.slice(0, -1);
               }
             }

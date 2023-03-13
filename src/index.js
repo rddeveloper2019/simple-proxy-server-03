@@ -38,11 +38,17 @@ const restartResetTimer = () => {
   }
 };
 
+const getProxyUrl = () => {
+  return proxyUrl;
+};
+
 const cookieCather = (req, res, next) => {
+  console.log('**proxyUrl:');
+  console.log(proxyUrl);
   if (catchedCookies.JSESSIONID) {
     req.headers.cookie = getCookiesString(req.headers.cookie, catchedCookies);
     console.log(catchedCookies);
-    //console.log(req.headers.cookie);
+    console.log(req.headers.cookie);
   }
   time = 10;
   restartResetTimer();
@@ -50,18 +56,21 @@ const cookieCather = (req, res, next) => {
   next();
 };
 
-app.use(cookieCather);
+app.use('/', cookieCather);
 
 app.get('/manual', (req, res) => {
   res.status(200);
   res.send(
-    `<h3>Прокси-сервер</h3><p></p><p style="max-width: 50%"> Принцип заключается в переадресации запроса через прокси сервер, на котором решается проблема с CORS. Тем не менее, браузер отказывется принимать и отправлять куки, без которых не происходит авторизация. Куки накапливаются на прокси-сервере и отправляются при каждом запросе, поэтому логин происходит со второго клика (* возможно это как-то решается). Cервер сбросится (перезапустится и завершит сессии) автоматически через 10 мин после последней активности (за это отвечает "let needResetTimer = true" в index.js ).Данные хранятся в оперативной памяти. Необходимо выполнять сброс перед началом и после окончания работы.  До обращения по адресу http://localhost:8080/index-pwa.html на прокси-сервере не должно быть никаких данных. Несброшенные данные, при входе в приложение могут приводить к блокировке аккаунта на 1 час (* необходимо уточнить).  Используйте онлайн-версию прокси сервера, если PWA перебрасывается на устройство с помощью ngrok. (Прокси-сервер может обслуживать только одно подключение одновременно!) Для онлайн-версии пропишите в файле config.ts: </p>
+    `<h3>Прокси-сервер</h3>
+    <p>Установлен стенд: <b>${standInfo}</b></p>
+    <p><button><a href="/toggleProxyUrl">Сменить стенд</a></button> (Сменит стенд, а также очистит накопленные данные)</p> 
+    <p><button><a href="/resetNow">Сброс</a></button> (TEST04  установится по умолчанию). </p>
+    <p style="max-width: 50%"> Принцип заключается в переадресации запроса через прокси сервер, на котором решается проблема с CORS. Тем не менее, браузер отказывется принимать и отправлять куки, без которых не происходит авторизация. Куки накапливаются на прокси-сервере и отправляются при каждом запросе, поэтому логин происходит со второго клика (* возможно это как-то решается). Cервер сбросится (перезапустится и завершит сессии) автоматически через 10 мин после последней активности (за это отвечает "let needResetTimer = true" в index.js ).Данные хранятся в оперативной памяти. Необходимо выполнять сброс перед началом и после окончания работы.  До обращения по адресу http://localhost:8080/index-pwa.html на прокси-сервере не должно быть никаких данных. Несброшенные данные, при входе в приложение могут приводить к блокировке аккаунта на 1 час (* необходимо уточнить).  Используйте онлайн-версию прокси сервера, если PWA перебрасывается на устройство с помощью ngrok. (Прокси-сервер может обслуживать только одно подключение одновременно!)</p>
+    <p>Для онлайн-версии пропишите в файле config.ts:</p>
     <p>var workHost =<b>"https://simple-proxy-server-03.onrender.com"</b></p>
     <p style="max-width: 50%"> Для локальной работы запустите прокси-сервер (npm start), пропишите в файле config.ts: </p>
     <p>var workHost =<b>"http://localhost:3000"</b></p>
-    <p>Установлен стенд: <b>${standInfo}</b></p>
-    <p><button><a href="/toggleProxyUrl">Сменить стенд</a></button> (Сменит стенд, а также очистит накопленные данные)</p> 
-    <p><button><a href="/resetNow">Сброс</a></button> (TEST04  установится по умолчанию. После сброса нажмите стрелку "НАЗАД"). </p>`
+    `
   );
 });
 
@@ -73,15 +82,20 @@ app.get('/toggleProxyUrl', (req, res) => {
       : 'https://test03.rshb.ru';
   standInfo = proxyUrl === 'https://test03.rshb.ru' ? 'TEST03' : 'TEST04';
   res.status(200);
-  console.log('Proxy URL: ', proxyUrl);
+  console.log('Proxy URL: ', getProxyUrl());
   res.redirect(`/manual`);
 });
 
-app.get('/resetNow', resetData);
+app.get('/resetNow', (req, res) => {
+  res.send(
+    '<p>Выполнен сброс сервера</p><button><a href="/manual">НАЗАД</a></button> '
+  );
+  resetData();
+});
 
 app.use(cors());
 
-app.use('/', proxy(proxyUrl));
+app.use('/', proxy(getProxyUrl()));
 
 app.listen(3000, () => {
   console.log(
