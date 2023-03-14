@@ -95,7 +95,8 @@ app.get('/resetNow', (req, res) => {
 
 app.use(cors());
 
-app.use('/', proxy(getProxyUrl()));
+
+app.use('/', proxy(getProxyUrl));
 
 app.listen(3000, () => {
   console.log(
