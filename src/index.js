@@ -42,7 +42,7 @@ const getProxyUrl = () => {
   return proxyUrl;
 };
 
-const cookieCather = (req, res, next) => {
+const cookieCatcher = (req, res, next) => {
   console.log('**proxyUrl:');
   console.log(proxyUrl);
   if (catchedCookies.JSESSIONID) {
@@ -56,7 +56,7 @@ const cookieCather = (req, res, next) => {
   next();
 };
 
-app.use('/', cookieCather);
+app.use('/', cookieCatcher);
 
 app.get('/manual', (req, res) => {
   res.status(200);
